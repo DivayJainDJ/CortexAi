@@ -16,11 +16,12 @@ const allowedOrigins = [
     "http://localhost:5174",
     "http://localhost:3000",
     "https://cortex-ai-ruby.vercel.app"
-].filter(Boolean);
+].filter(Boolean).map(o => o.replace(/\/$/, ""));
 
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        const normalizedOrigin = origin ? origin.replace(/\/$/, "") : origin;
+        if (!normalizedOrigin || allowedOrigins.includes(normalizedOrigin)) {
             callback(null, true);
         } else {
             callback(new Error("Not allowed by CORS"));
