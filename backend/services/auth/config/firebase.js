@@ -14,10 +14,17 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   credential = cert(serviceAccount);
 } else {
   // Local development: read from file
-  const serviceAccount = JSON.parse(
-    readFileSync(join(__dirname, "../serviceAccountKey.json"), "utf-8")
-  );
-  credential = cert(serviceAccount);
+  try {
+    const serviceAccount = JSON.parse(
+      readFileSync(join(__dirname, "../serviceAccountKey.json"), "utf-8")
+    );
+    credential = cert(serviceAccount);
+  } catch (err) {
+    throw new Error(
+      "FIREBASE_SERVICE_ACCOUNT env var is not set and serviceAccountKey.json was not found. " +
+      "On Render, set FIREBASE_SERVICE_ACCOUNT to the full JSON contents of your service account key."
+    );
+  }
 }
 
 export const app = initializeApp({ credential });
