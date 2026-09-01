@@ -16,5 +16,12 @@ app.get("/",(req,res)=>{
 
 app.listen(port,()=>{
     console.log(`chat started at ${port}`)
-    connectDb()
+    connectDb().catch(err => console.error("DB connection failed:", err))
+})
+
+process.on("uncaughtException", (err) => {
+    console.error("Uncaught Exception:", err)
+})
+process.on("unhandledRejection", (err) => {
+    console.error("Unhandled Rejection:", err)
 })
