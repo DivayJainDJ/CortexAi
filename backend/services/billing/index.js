@@ -5,7 +5,7 @@ import router from "./routes/billing.route.js"
 
 dotenv.config()
 
-const port = process.env.PORT || 3003
+const port = Number(process.env.PORT) || 3003
 
 const app=express()
 app.use(express.json())
@@ -14,7 +14,7 @@ app.get("/",(req,res)=>{
     res.json({message:"hello from billing"})
 })
 
-app.listen(port,()=>{
+app.listen(port, "0.0.0.0", () => {
     console.log(`billing started at ${port}`)
     connectDb()
 })

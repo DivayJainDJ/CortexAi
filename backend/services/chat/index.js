@@ -5,7 +5,7 @@ import router from "./routes/chat.routes.js"
 
 dotenv.config()
 
-const port = process.env.PORT || 3002
+const port = Number(process.env.PORT) || 3002
 
 const app=express()
 app.use(express.json())
@@ -14,7 +14,7 @@ app.get("/",(req,res)=>{
     res.json({message:"hello from chat"})
 })
 
-app.listen(port,()=>{
+app.listen(port, "0.0.0.0", () => {
     console.log(`chat started at ${port}`)
     connectDb().catch(err => console.error("DB connection failed:", err))
 })

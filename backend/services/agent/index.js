@@ -4,7 +4,7 @@ import connectDb from "./config/db.js"
 import router from "./routes/agent.route.js"
 dotenv.config()
 
-const port = process.env.PORT || 3004
+const port = Number(process.env.PORT) || 3004
 
 const app=express()
 
@@ -26,7 +26,7 @@ app.get("/",(req,res)=>{
     res.json({message:"hello from agent"})
 })
 
-app.listen(port,()=>{
+app.listen(port, "0.0.0.0", () => {
     console.log(`agent started at ${port}`)
     connectDb()
 })

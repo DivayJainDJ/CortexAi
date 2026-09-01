@@ -8,7 +8,7 @@ import { getCurrentUser } from "./controllers/user.controller.js"
 import protect from "./middleware/auth.middleware.js"
 import { proxyWithHeader } from "./utils/proxyWithHeader.js"
 import morgan from "morgan"
-const port = process.env.PORT || 8000
+const port = Number(process.env.PORT) || 8000
 
 const app=express()
 const allowedOrigins = [
@@ -38,6 +38,6 @@ app.get("/",(req,res)=>{
     res.json({message:"hello from gateway v5"})
 })
 
-app.listen(port,()=>{
+app.listen(port, "0.0.0.0", () => {
     console.log(`gateway started at ${port}`)
 })
