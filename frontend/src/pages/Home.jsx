@@ -1,4 +1,4 @@
-import { signInWithPopup } from 'firebase/auth'
+import { signInWithRedirect, getRedirectResult } from 'firebase/auth'
 import React from 'react'
 import { auth, googleProvider } from '../../utils/firebase'
 import api from '../../utils/axios'
@@ -12,22 +12,35 @@ import Artifact from '../components/Artifact';
 function Home() {
     const {userData}=useSelector(state=>state.user)
     const dispatch=useDispatch()
+
     const handleLogin = async (token) => {
         try {
             const { data } = await api.post("/api/auth/login", { token })
             dispatch(setUserdata(data))
         } catch (error) {
-            console.log(error)
+            console.log("Login error:", error)
         }
     }
 
+    React.useEffect(() => {
+        getRedirectResult(auth)
+            .then(async (result) => {
+                if (result) {
+                    const token = await result.user.getIdToken()
+                    await handleLogin(token)
+                }
+            })
+            .catch((error) => {
+                console.log("Redirect result error:", error)
+            })
+    }, [])
 
     const googleLogin = async () => {
-        const data = await signInWithPopup(auth, googleProvider)
-        const token = await data.user.getIdToken()
-        console.log(token)
-        await handleLogin(token)
-        console.log(data)
+        try {
+            await signInWithRedirect(auth, googleProvider)
+        } catch (error) {
+            console.log("Google login error:", error)
+        }
     }
     return (
         <div className='h-screen  flex bg-[#0d0f14] text-white overflow-hidden'>
