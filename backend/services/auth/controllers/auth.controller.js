@@ -1,7 +1,7 @@
 import { getAuth } from "firebase-admin/auth"
 import { app } from "../config/firebase.js"
 import User from "../models/user.model.js"
-import { createConnection } from "mongoose"
+import crypto from "node:crypto"
 import redis from "../../../shared/redis/redis.js"
 
 export const login = async (req, res) => {
@@ -39,16 +39,18 @@ export const login = async (req, res) => {
 
 
 
+        const isProd = process.env.NODE_ENV === "production"
         res.cookie("session", sessionId, {
             httpOnly: true,
-            secure: false,
-            sameSite: "strict",
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
         return res.status(200).json(user)
 
     } catch (error) {
+        console.error("[login] failed:", error?.message || String(error), error?.stack || "")
         return res.status(500).json({ message: `login error ${error}` })
     }
 }
