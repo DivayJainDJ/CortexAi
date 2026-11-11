@@ -3,6 +3,13 @@
   "outputDirectory": "frontend/dist",
   "installCommand": "npm install --prefix frontend",
   "rewrites": [
-    { "source": "/((?!assets/).*)", "destination": "/index.html" }
+    {
+      "source": "/api/:path*",
+      "destination": "https://cortexai-gateway-new.onrender.com/api/:path*"
+    },
+    {
+      "source": "/((?!assets/).*)",
+      "destination": "/index.html"
+    }
   ]
 }
