@@ -57,10 +57,14 @@ return {
 ⏳ Link expires in 10 minutes.`
 }
     } catch (error) {
-       console.log(error)
+       const status = error?.response?.status
+       const upstream = error?.response?.data?.message || error?.response?.data?.error?.message
+       console.error(JSON.stringify({ event: "vision_failed", status, upstream, error: error?.message }))
          return {
             ...state,
-            aiResponse:error?.data?.message || "failed to generate image"
+            aiResponse: upstream
+              ? `Image generation failed (${status}): ${upstream}`
+              : `failed to generate image${status ? ` (${status})` : ""}: ${error?.message || "unknown error"}`
         }
     }
    
