@@ -36,15 +36,15 @@ function Home() {
     // Render's free tier hibernates; the first request wakes the service and can
     // come back as 429/503. Retry once so a cold start does not look like a CORS error.
     let response;
-    for (let attempt = 0; attempt < 3; attempt += 1) {
+    for (let attempt = 0; attempt < 5; attempt += 1) {
       try {
         response = await api.post("/api/auth/login", { token });
         break;
       } catch (error) {
         const status = error?.response?.status;
-        if ((status === 429 || status === 503 || status === 502 || !error?.response) && attempt < 2) {
-          setLoginError("Starting the server, retrying…");
-          await new Promise((resolve) => setTimeout(resolve, 8000));
+        if ((status === 429 || status === 503 || status === 502 || !error?.response) && attempt < 4) {
+          setLoginError(`Starting the server, retrying (${attempt + 1}/4)…`);
+          await new Promise((resolve) => setTimeout(resolve, 12000));
           continue;
         }
         throw error;
