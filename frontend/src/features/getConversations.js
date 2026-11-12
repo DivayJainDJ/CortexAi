@@ -2,6 +2,7 @@ import api from "../../utils/axios"
 import { auth } from "../../utils/firebase"
 
 export const getConversations=async () => {
+    if(auth.authStateReady) await auth.authStateReady()
     if(!auth.currentUser) return []
     try {
         const {data}=await api.get("/api/chat/get-conversations")
