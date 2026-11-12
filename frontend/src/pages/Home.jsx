@@ -30,7 +30,7 @@ function Home() {
         console.error("Google redirect login error:", error);
       });
     return () => { cancelled = true; };
-  });
+  }, []);
 
   const handleLogin = async (token) => {
     const { data } = await api.post("/api/auth/login", { token });
