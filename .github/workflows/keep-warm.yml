@@ -1,0 +1,34 @@
+name: keep cortex services awake
+
+on:
+  schedule:
+    # Render's free tier hibernates after ~15 minutes idle, and a request to a
+    # sleeping instance comes back as 429 (x-render-routing: hibernate-rate-limited),
+    # which the browser surfaces as a CORS error because the edge page has no CORS headers.
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - https://cortexai-gateway-new.onrender.com/
+          - https://cortexai-auth-gzfa.onrender.com/health
+          - https://cortexai-chat-o60p.onrender.com/health
+          - https://cortexai-agent-882t.onrender.com/health
+          - https://cortexai-billing-mc6w.onrender.com/health
+    steps:
+      - name: wake ${{ matrix.target }}
+        run: |
+          for attempt in 1 2 3; do
+            code=$(curl -s -o /dev/null -m 90 -w '%{http_code}' \
+              -H 'User-Agent: cortex-keeper/1.0 (+https://cortex-ai-ruby.vercel.app)' \
+              "${{ matrix.target }}" || echo 000)
+            echo "attempt $attempt -> $code"
+            [ "$code" != "000" ] && break
+            sleep 20
+          done
